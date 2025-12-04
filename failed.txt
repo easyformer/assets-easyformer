@@ -1,0 +1,5 @@
+kits/happyformer/logo/happyformer_logo_trs_xl.png
+kits/happyformer/logo/happyformer_logo_trs_md.png
+kits/happyformer/logo/happyformer_logo_trs_xs.png
+kits/happyformer/logotxt/happyformer_logotxt_trs_md.png
+kits/happyformer/logotxt/happyformer_logotxt_trs_xs.png
