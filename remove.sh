@@ -1,6 +1,6 @@
 #!/bin/bash
 
-API_KEY="KVoZX1uMzNXo95zgRhZ2h3La"
+API_KEY=""
 FAILED_LIST="failed.txt"
 
 if [ ! -f "$FAILED_LIST" ]; then
