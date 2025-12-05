@@ -7,7 +7,17 @@ if [ "$API_KEY" = "YOUR_API_KEY" ]; then
   exit 1
 fi
 
-find . -type f -name "*_bl_*.png" | while read -r file; do
+# Patterns autorisés
+PATTERNS="^.*(easyformers_icone_bl|easyformers_logotxt_bl|easy4ia_icone_bl|easy4ia_logotxt_bl).*\.png$"
+
+find . -type f -name "*.png" | while read -r file; do
+
+    # Vérifier si le nom correspond à un des motifs
+    filename=$(basename "$file")
+    if ! echo "$filename" | grep -Eq "$PATTERNS"; then
+        echo "⛔ Ignoré (non concerné) : $filename"
+        continue
+    fi
 
     echo ""
     echo "-------------------------------------------"
@@ -19,9 +29,9 @@ find . -type f -name "*_bl_*.png" | while read -r file; do
       -F "image=@${file}" \
       -F "output_type=cutout" \
       -F "format=PNG" \
-      -F "bg_color=#ffffff")
+      -F "bg_color=#FFFFFF")
 
-    # Extraire URL
+    # Extraction de l’URL
     url=$(echo "$response" | grep -o '"url":"[^"]*' | cut -d'"' -f4)
 
     if [ -z "$url" ]; then
@@ -32,35 +42,32 @@ find . -type f -name "*_bl_*.png" | while read -r file; do
 
     tmp="${file}.tmp.png"
 
-    # Download image
     curl -s "$url" --output "$tmp"
 
-    # Check file valide
     if [ ! -s "$tmp" ]; then
-      echo "❌ Image téléchargée invalide."
+      echo "❌ Image téléchargée vide / invalide."
       rm -f "$tmp"
       continue
     fi
 
     if ! file "$tmp" | grep -q "PNG image"; then
-      echo "❌ L’API n’a pas renvoyé un PNG valide."
+      echo "❌ Le résultat n'est pas un PNG valide."
       rm -f "$tmp"
       continue
     fi
 
-    echo "✔️ Image générée OK."
+    echo "✔️ Image générée OK : $tmp"
 
-    # Backup original
+    # backup
     backup="${file%.png}.old.png"
     cp "$file" "$backup"
+    echo "📦 Backup créé : $backup"
 
-    # Replace
+    # remplacement
     mv "$tmp" "$file"
-
     echo "🔥 Remplacement effectué."
-    echo "🛡 Backup sauvegardé : $backup"
 
 done
 
 echo ""
-echo "🏁 Terminé."
+echo "🏁 Terminé"
